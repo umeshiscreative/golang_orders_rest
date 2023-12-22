@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"os"
+	"os/signal"
 
 	"github.com/umeshiscreative/reset-service/application"
 )
@@ -9,7 +12,13 @@ import (
 func main() {
 	app := application.New()
 
-	err := app.Start()
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+
+	defer cancel()
+
+	fmt.Println("Server is starting...")
+
+	err := app.Start(ctx)
 	if err != nil {
 		fmt.Println("Unable to serve the Server")
 	}

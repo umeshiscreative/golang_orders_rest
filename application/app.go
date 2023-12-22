@@ -1,8 +1,10 @@
 package application
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 type App struct {
@@ -16,17 +18,28 @@ func New() *App {
 	return app
 }
 
-func (app *App) Start() error {
+func (app *App) Start(ctx context.Context) error {
 	server := &http.Server{
 		Addr:    ":3000",
 		Handler: app.router,
 	}
 
-	err := server.ListenAndServe()
+	ch := make(chan error, 1)
 
-	if err != nil {
-		e := fmt.Errorf("Failed to start the Server !!!")
-		return e
+	go func() {
+		err := server.ListenAndServe()
+		if err != nil {
+			ch <- fmt.Errorf("Failed to start the Server %w", err)
+		}
+		close(ch)
+	}()
+
+	select {
+	case err := <-ch:
+		return err
+	case <-ctx.Done():
+		timeout, cancel := context.WithTimeout(context.Background(), time.Second*10)
+		defer cancel()
+		return server.Shutdown(timeout)
 	}
-	return nil
 }
