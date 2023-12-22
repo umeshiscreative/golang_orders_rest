@@ -1,10 +1,10 @@
 package application
 
 import (
-	"net/http"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+
+	"github.com/umeshiscreative/reset-service/handler"
 )
 
 func loadRouters() *chi.Mux {
@@ -12,13 +12,13 @@ func loadRouters() *chi.Mux {
 
 	router.Use(middleware.Logger)
 
-	router.Route("/orders", loadOrderRouter)
+	router.Route("/orders", loadOrderRoutes)
 
 	return router
 }
 
-func loadOrderRouter(route chi.Router) {
-	route.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
+func loadOrderRoutes(route chi.Router) {
+	orderHandler := &handler.Order{}
+
+	route.Get("/", orderHandler.GetOrder)
 }
