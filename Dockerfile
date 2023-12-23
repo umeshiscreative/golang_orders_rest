@@ -16,4 +16,4 @@ COPY --chown=1001:1001 --from=root-certs /etc/ssl/certs/ca-certificates.crt /etc
 COPY --chown=1001:1001 --from=builder /deployment/out/golang_orders_rest /golang_orders_rest
 
 USER app
-ENTRYPOINT ["/deployment/golang_orders_rest"]
+ENTRYPOINT ["/golang_orders_rest"]
