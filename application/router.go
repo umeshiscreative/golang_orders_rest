@@ -21,4 +21,8 @@ func loadOrderRoutes(route chi.Router) {
 	orderHandler := &handler.Order{}
 
 	route.Get("/", orderHandler.GetOrder)
+	route.Get("/{id}", orderHandler.GetOrderById)
+	route.Post("/", orderHandler.CreateOrder)
+	route.Put("/", orderHandler.UpdateOrder)
+	route.Delete("/", orderHandler.DeleteOrder)
 }
